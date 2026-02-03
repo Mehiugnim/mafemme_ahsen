@@ -203,8 +203,6 @@
     </div>
 
     <script>
-        let currentQuestion = 1;
-
         function nextQuestion(questionNum) {
             if (questionNum === 1) {
                 document.getElementById('question1').style.display = 'none';
@@ -223,9 +221,9 @@
             const containerRect = container.getBoundingClientRect();
             const btnRect = noBtn.getBoundingClientRect();
             
-            // Calculate random position within container
-            const maxX = containerRect.width - btnRect.width - 20;
-            const maxY = containerRect.height - btnRect.height - 20;
+            // Calculate random position within container with validation
+            const maxX = Math.max(0, containerRect.width - btnRect.width - 20);
+            const maxY = Math.max(0, containerRect.height - btnRect.height - 20);
             
             const randomX = Math.random() * maxX;
             const randomY = Math.random() * maxY;
