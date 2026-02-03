@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veux-tu être ma Valentine ? / Sevgilim olur musun? 💖</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino', serif;
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 50%, #ff6b9d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 50px;
+            max-width: 700px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #d63384;
+            margin-bottom: 30px;
+            font-weight: 400;
+            letter-spacing: 2px;
+        }
+
+        .quiz-section, .final-section, .success-section {
+            display: none;
+        }
+
+        .quiz-section.active, .final-section.active, .success-section.active {
+            display: block;
+        }
+
+        .question {
+            margin: 40px 0;
+        }
+
+        .question h2 {
+            font-size: 1.6em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .bilingual-text {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        .gif-placeholder {
+            width: 300px;
+            height: 200px;
+            background: #f8f9fa;
+            border: 3px dashed #d63384;
+            border-radius: 15px;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-style: italic;
+        }
+
+        button {
+            font-family: 'Georgia', 'Palatino', serif;
+            font-size: 1.3em;
+            padding: 15px 40px;
+            margin: 15px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #d63384 0%, #e91e63 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(214, 51, 132, 0.3);
+        }
+
+        .btn-yes:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(214, 51, 132, 0.4);
+        }
+
+        .btn-no {
+            background: #e0e0e0;
+            color: #666;
+            position: absolute;
+            transition: all 0.1s ease;
+        }
+
+        .button-container {
+            position: relative;
+            min-height: 80px;
+            margin: 30px 0;
+        }
+
+        .success-message {
+            font-size: 3em;
+            color: #d63384;
+            margin: 40px 0;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .heart {
+            color: #d63384;
+            font-size: 1.5em;
+            display: inline-block;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.2);
+            }
+            50% {
+                transform: scale(1);
+            }
+        }
+
+        p {
+            font-size: 1.2em;
+            color: #555;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pour ma Valentine 💕<br><span style="font-size: 0.7em; color: #c44569;">Sevgilime 💕</span></h1>
+        
+        <!-- Quiz Section -->
+        <div class="quiz-section active" id="quiz">
+            <div class="question" id="question1">
+                <h2>Es-tu la plus géniale ?</h2>
+                <p class="bilingual-text">En harika kişi sen misin?</p>
+                <div class="gif-placeholder">[Insérer GIF adorable ici]</div>
+                <button class="btn-yes" onclick="nextQuestion(1)">Oui / Evet ✨</button>
+            </div>
+            
+            <div class="question" id="question2" style="display: none;">
+                <h2>Qui te rend heureuse ?</h2>
+                <p class="bilingual-text">Seni mutlu eden kim?</p>
+                <div class="gif-placeholder">[Insérer GIF de bonheur ici]</div>
+                <button class="btn-yes" onclick="nextQuestion(2)">Toi / Sen 🌟</button>
+            </div>
+        </div>
+
+        <!-- Final Question Section -->
+        <div class="final-section" id="finalQuestion">
+            <h2>Veux-tu être ma Valentine ?</h2>
+            <p class="bilingual-text">Sevgilim olur musun?</p>
+            <div class="gif-placeholder">[Insérer GIF romantique ici]</div>
+            <div class="button-container" id="buttonContainer">
+                <button class="btn-yes" onclick="acceptValentine()">Oui / Evet ! 💖</button>
+                <button class="btn-no" id="noBtn" onmouseover="moveNoButton()">Non / Hayır</button>
+            </div>
+        </div>
+
+        <!-- Success Section -->
+        <div class="success-section" id="successMessage">
+            <div class="success-message">Je t'aime ! <span class="heart">❤️</span></div>
+            <p class="bilingual-text" style="font-size: 1.5em; margin: 10px 0;">Seni seviyorum!</p>
+            <div class="gif-placeholder">[Insérer GIF de célébration ici]</div>
+            <p>Tu es ma Valentine préférée aujourd'hui et pour toujours ! 💕</p>
+            <p class="bilingual-text">Bugün ve sonsuza dek en sevdiğim Sevgilimsin!</p>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+
+        function nextQuestion(questionNum) {
+            if (questionNum === 1) {
+                document.getElementById('question1').style.display = 'none';
+                document.getElementById('question2').style.display = 'block';
+            } else if (questionNum === 2) {
+                document.getElementById('quiz').classList.remove('active');
+                document.getElementById('finalQuestion').classList.add('active');
+            }
+        }
+
+        function moveNoButton() {
+            const noBtn = document.getElementById('noBtn');
+            const container = document.getElementById('buttonContainer');
+            
+            // Get container dimensions
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            // Calculate random position within container
+            const maxX = containerRect.width - btnRect.width - 20;
+            const maxY = containerRect.height - btnRect.height - 20;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        function acceptValentine() {
+            document.getElementById('finalQuestion').classList.remove('active');
+            document.getElementById('successMessage').classList.add('active');
+            
+            // Create canvas for confetti
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const canvas = document.createElement('canvas');
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            canvas.style.pointerEvents = 'none';
+            canvas.style.zIndex = '9999';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const confettiColors = ['#ff69b4', '#ff1493', '#ffc0cb', '#ffb6c1', '#d63384', '#e91e63'];
+            const confettiPieces = [];
+            const confettiCount = 150;
+
+            class ConfettiPiece {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = -20;
+                    this.w = Math.random() * 10 + 5;
+                    this.h = Math.random() * 5 + 5;
+                    this.color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                    this.rotation = Math.random() * 360;
+                    this.rotationSpeed = Math.random() * 10 - 5;
+                    this.speedY = Math.random() * 3 + 2;
+                    this.speedX = Math.random() * 2 - 1;
+                    this.opacity = 1;
+                }
+
+                update() {
+                    this.y += this.speedY;
+                    this.x += this.speedX;
+                    this.rotation += this.rotationSpeed;
+                    
+                    if (this.y > canvas.height - 100) {
+                        this.opacity -= 0.02;
+                    }
+                }
+
+                draw() {
+                    ctx.save();
+                    ctx.globalAlpha = this.opacity;
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation * Math.PI / 180);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.w / 2, -this.h / 2, this.w, this.h);
+                    ctx.restore();
+                }
+            }
+
+            // Create confetti pieces
+            for (let i = 0; i < confettiCount; i++) {
+                setTimeout(() => {
+                    confettiPieces.push(new ConfettiPiece());
+                }, i * 20);
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                confettiPieces.forEach((piece, index) => {
+                    piece.update();
+                    piece.draw();
+
+                    if (piece.opacity <= 0) {
+                        confettiPieces.splice(index, 1);
+                    }
+                });
+
+                if (confettiPieces.length > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    document.body.removeChild(canvas);
+                }
+            }
+
+            animate();
+        }
+    </script>
+</body>
+</html>
