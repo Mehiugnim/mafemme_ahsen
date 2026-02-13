@@ -27,7 +27,7 @@
             position: relative;
         }
         h1 { font-size: 2.2em; color: #d63384; margin-bottom: 20px; font-weight: 400; letter-spacing: 2px; }
-        .quiz-section, .final-section, .success-section { display: none; }
+        .quiz-section, .puzzle-section, .final-section, .success-section { display: none; }
         .active { display: block; }
         .question { margin: 20px 0; }
         .question h2 { font-size: 1.6em; color: #333; margin-bottom: 15px; font-weight: 300; }
@@ -55,6 +55,15 @@
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .heart { color: #d63384; display: inline-block; animation: heartbeat 1.5s infinite; }
         @keyframes heartbeat { 0%, 100%, 50% { transform: scale(1); } 25% { transform: scale(1.2); } }
+        
+        /* Puzzle Styles */
+        .puzzle-container { width: 100%; max-width: 360px; margin: 20px auto; }
+        .puzzle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; background: #d63384; padding: 3px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .puzzle-tile { aspect-ratio: 1; background-size: 300%; background-position: center; cursor: pointer; transition: all 0.3s ease; border-radius: 5px; position: relative; }
+        .puzzle-tile:hover:not(.empty) { transform: scale(0.95); opacity: 0.8; }
+        .puzzle-tile.empty { background: #f0f0f0; cursor: default; }
+        .puzzle-moves { margin: 15px 0; font-size: 1.1em; color: #666; }
+        .puzzle-complete { font-size: 1.3em; color: #d63384; font-weight: bold; margin: 15px 0; }
     </style>
 </head>
 <body>
@@ -81,6 +90,20 @@
             </div>
         </div>
 
+        <div class="puzzle-section" id="puzzleGame">
+            <h2>Résous ce puzzle pour continuer !</h2>
+            <p class="bilingual-text">Devam etmek için bulmacayı çöz!</p>
+            <div class="puzzle-container">
+                <div class="puzzle-grid" id="puzzleGrid"></div>
+            </div>
+            <div class="puzzle-moves">Mouvements / Hamle: <span id="moveCount">0</span></div>
+            <div class="puzzle-complete" id="puzzleComplete" style="display: none;">
+                Bravo ! Tu as résolu le puzzle ! 🎉<br>
+                <span class="bilingual-text">Tebrikler! Bulmacayı çözdün!</span>
+            </div>
+            <button class="btn-yes" id="continueBtn" onclick="continueFromPuzzle()" style="display: none;">Continuer / Devam et 💕</button>
+        </div>
+
         <div class="final-section" id="finalQuestion">
             <h2>Veux-tu être ma Valentine ?</h2>
             <p class="bilingual-text">Sevgilim olur musun?</p>
@@ -105,13 +128,130 @@
     </div>
 
     <script>
+        // Puzzle Game Variables
+        let tiles = [];
+        let emptyIndex = 8;
+        let moves = 0;
+        const puzzleImage = 'https://picsum.photos/360/360?random=1'; // Replace this URL with your uploaded photo
+        
+        function initPuzzle() {
+            const grid = document.getElementById('puzzleGrid');
+            grid.innerHTML = '';
+            tiles = [];
+            moves = 0;
+            document.getElementById('moveCount').textContent = moves;
+            document.getElementById('puzzleComplete').style.display = 'none';
+            document.getElementById('continueBtn').style.display = 'none';
+            
+            // Create tiles in order
+            for (let i = 0; i < 9; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'puzzle-tile';
+                tile.dataset.index = i;
+                
+                if (i === 8) {
+                    tile.classList.add('empty');
+                } else {
+                    const row = Math.floor(i / 3);
+                    const col = i % 3;
+                    tile.style.backgroundImage = `url(${puzzleImage})`;
+                    tile.style.backgroundPosition = `${col * -100}% ${row * -100}%`;
+                }
+                
+                tile.addEventListener('click', () => moveTile(i));
+                grid.appendChild(tile);
+                tiles.push(tile);
+            }
+            
+            // Shuffle the puzzle
+            shufflePuzzle();
+        }
+        
+        function shufflePuzzle() {
+            // Do 50 random valid moves to ensure solvable puzzle
+            for (let i = 0; i < 50; i++) {
+                const validMoves = getValidMoves();
+                const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                swapTiles(emptyIndex, randomMove, false);
+            }
+            moves = 0;
+            document.getElementById('moveCount').textContent = moves;
+        }
+        
+        function getValidMoves() {
+            const valid = [];
+            const row = Math.floor(emptyIndex / 3);
+            const col = emptyIndex % 3;
+            
+            if (row > 0) valid.push(emptyIndex - 3); // Up
+            if (row < 2) valid.push(emptyIndex + 3); // Down
+            if (col > 0) valid.push(emptyIndex - 1); // Left
+            if (col < 2) valid.push(emptyIndex + 1); // Right
+            
+            return valid;
+        }
+        
+        function moveTile(index) {
+            if (document.getElementById('puzzleComplete').style.display !== 'none') return;
+            
+            const validMoves = getValidMoves();
+            if (validMoves.includes(index)) {
+                swapTiles(emptyIndex, index, true);
+                checkWin();
+            }
+        }
+        
+        function swapTiles(index1, index2, countMove) {
+            const temp = tiles[index1].className;
+            const tempBg = tiles[index1].style.backgroundImage;
+            const tempBgPos = tiles[index1].style.backgroundPosition;
+            
+            tiles[index1].className = tiles[index2].className;
+            tiles[index1].style.backgroundImage = tiles[index2].style.backgroundImage;
+            tiles[index1].style.backgroundPosition = tiles[index2].style.backgroundPosition;
+            
+            tiles[index2].className = temp;
+            tiles[index2].style.backgroundImage = tempBg;
+            tiles[index2].style.backgroundPosition = tempBgPos;
+            
+            emptyIndex = index2;
+            
+            if (countMove) {
+                moves++;
+                document.getElementById('moveCount').textContent = moves;
+            }
+        }
+        
+        function checkWin() {
+            for (let i = 0; i < 8; i++) {
+                const row = Math.floor(i / 3);
+                const col = i % 3;
+                const expectedPos = `${col * -100}% ${row * -100}%`;
+                
+                if (tiles[i].classList.contains('empty') || 
+                    tiles[i].style.backgroundPosition !== expectedPos) {
+                    return;
+                }
+            }
+            
+            // Puzzle is complete!
+            document.getElementById('puzzleComplete').style.display = 'block';
+            document.getElementById('continueBtn').style.display = 'inline-block';
+        }
+        
+        function continueFromPuzzle() {
+            document.getElementById('puzzleGame').classList.remove('active');
+            document.getElementById('finalQuestion').classList.add('active');
+        }
+        
         function nextQuestion(num) {
             if (num === 1) {
                 document.getElementById('question1').style.display = 'none';
                 document.getElementById('question2').style.display = 'block';
             } else {
                 document.getElementById('quiz').classList.remove('active');
-                document.getElementById('finalQuestion').classList.add('active');
+                document.getElementById('puzzleGame').classList.add('active');
+                initPuzzle();
             }
         }
 
