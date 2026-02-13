@@ -101,7 +101,7 @@
                 Bravo ! Tu as résolu le puzzle ! 🎉<br>
                 <span class="bilingual-text">Tebrikler! Bulmacayı çözdün!</span>
             </div>
-            <button class="btn-yes" id="continueBtn" onclick="continueToPuzzle()" style="display: none;">Continuer / Devam et 💕</button>
+            <button class="btn-yes" id="continueBtn" onclick="continueFromPuzzle()" style="display: none;">Continuer / Devam et 💕</button>
         </div>
 
         <div class="final-section" id="finalQuestion">
@@ -132,7 +132,7 @@
         let tiles = [];
         let emptyIndex = 8;
         let moves = 0;
-        const puzzleImage = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGZ3bmZ3bmZ3bmZ3bmZ3bmZ3bmZ3bmZ3bmZ3bmZ3bmZ3JmVwPXYxX2ludGVybmFsX2dpZl9ieV9pZCZjdD1n/l0HlvU6gXnZHhbBv2/giphy.gif';
+        const puzzleImage = 'https://picsum.photos/360/360?random=1'; // Replace this URL with your uploaded photo
         
         function initPuzzle() {
             const grid = document.getElementById('puzzleGrid');
@@ -239,7 +239,7 @@
             document.getElementById('continueBtn').style.display = 'inline-block';
         }
         
-        function continueToPuzzle() {
+        function continueFromPuzzle() {
             document.getElementById('puzzleGame').classList.remove('active');
             document.getElementById('finalQuestion').classList.add('active');
         }
