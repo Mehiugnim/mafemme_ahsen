@@ -36,6 +36,7 @@
         /* Style pour les images/GIFs */
         .gif-container { width: 100%; max-width: 300px; margin: 20px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .gif-container img { width: 100%; height: auto; display: block; }
+        .gif-container video { width: 100%; height: auto; display: block; }
 
         button {
             font-family: 'Georgia', 'Palatino', serif;
@@ -110,7 +111,7 @@
             <h2>Veux-tu être ma Valentine ?</h2>
             <p class="bilingual-text">Sevgilim olur musun?</p>
             <div class="gif-container">
-                <video autoplay loop muted playsinline style="width: 100%; height: auto; display: block;">
+                <video autoplay loop muted playsinline aria-label="Final Valentine quest video">
                     <source src="https://github.com/user-attachments/assets/ef243096-49c5-4fec-a7ab-d6269129dc0e" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
